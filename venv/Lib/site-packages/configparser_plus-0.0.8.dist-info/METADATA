@@ -1,0 +1,57 @@
+Metadata-Version: 2.1
+Name: configparser-plus
+Version: 0.0.8
+Summary: The advance version of origin configparser.
+Home-page: https://gitee.com/leviathan-litan/python_config_file_plus
+Author: Leviathan-litan
+Author-email: leviathan_litan@163.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 2
+Classifier: Development Status :: 5 - Production/Stable
+Description-Content-Type: text/markdown
+
+# Python |  配置文件++
+
+# 说明
+在Python中操纵配置文件的模块包是`configparser`。  
+它一般适用的配置文件的格式是类似于MySQL的参数文件`/etc/my.cnf`那样的文件的。  
+
+这种配置文件中的`键（Key）` 与 `值（Value）`一般都是文本形式的静态文件。  
+
+但更多的时候我们希望配置文件中的值是可以跟着当前所在环境而动态变化的。  
+并且，配置文件最好可以像`Linux`环境中的环境变量文件`~/.bash_profile`那样引用之前设置好的变量，而不是从头开始写很多冗余的内容。  
+
+因此，为了实现上述的两种基本需求，我编写了这样一个Python脚本。  
+在`configparser`的基础上增加了自定义的语法支持：  
+1. 在配置文件中，引用操作系统命令的执行结果为某个参数的值，使用一对【`】号，框选期望的操作系统命令；
+2. 在配置文件中，引用配置文件中定义的其他参数的值，使用一对【@】符号，并且引用参数的格式为：
+参数的`[section]`名称.参数的`key`名称
+
+具体的使用方法可以参阅下面的演示部分。
+
+# 演示
+配置文件
+```
+[os]
+username=Leviathan·利维坦
+hostname=<@os.username@>你好，欢迎来到#`hostname`#
+```
+例如，我希望从上面的配置文件中获取`[os]`下的`hostname`参数的值；
+
+运行效果如下所示：
+```
+D:\PyCharm_data\python_config_file_plus\venv\Scripts\python.exe D:/PyCharm_data/python_config_file_plus/config_file_plus.py
+===============
+<Leviathan·利维坦>你好，欢迎来到#Godzilla#
+
+Process finished with exit code 0
+```
+可以看到：
+1. 通过【@】获得了对配置文件中其他参数的引用
+2. 通过【`】获得了操作系统命令执行的结果
+
+---
+
+
