@@ -1,7 +1,7 @@
 from pyspark.sql import SparkSession
 from pyspark import SparkContext
 from pyspark.sql import HiveContext
-import src.UsedFunctions as uf
+import src.usedFunctions as uf
 import conf.variables as v
 
 def test_runner():

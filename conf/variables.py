@@ -2,6 +2,7 @@
 DB = "pycharm"
 tableName = "randomDataPy"
 fullyQualifiedTableName = DB + '.' + tableName
+tempView = "tmp"
 settings = [
       ("hive.exec.dynamic.partition", "true"),
       ("hive.exec.dynamic.partition.mode", "nonstrict"),
@@ -21,6 +22,8 @@ settings = [
       ("hive.metastore.authorization.storage.checks", "/apps/hive/warehouse"),
       ("hive.stats.autogather", "true")
 ]
+rowsToGenerate = 10
+
 # oracle variables
 driverName = "oracle.jdbc.OracleDriver"
 _username = "scratchpad"

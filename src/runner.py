@@ -1,5 +1,5 @@
 import mathOperations as mo
-import UsedFunctions as uf
+import usedFunctions as uf
 import conf.variables as v
 import conf.configs as c
 import MyTests as m
@@ -7,7 +7,7 @@ import sales as sa
 
 from sparkutils import sparkstuff as s
 
-class someClass:
+class SomeClass:
 
  def main():
   appName = "app1"
@@ -15,7 +15,6 @@ class someClass:
   spark.sparkContext._conf.setAll(v.settings)
   sc = s.sparkcontext()
   print(sc.getConf().getAll())
-  hivecontext = s.hivecontext()
   lst = (spark.sql("SELECT FROM_unixtime(unix_timestamp(), 'dd/MM/yyyy HH:mm:ss.ss') ")).collect()
   print("\nStarted at");uf.println(lst)
 
@@ -108,7 +107,7 @@ if __name__ == "__main__":
   print("\nExpected gross salary per year at daily rate of GBP" + str(mathoperations.returnDailyRate()) + " is " + mathoperations.expectedYearlyIncome())
   print("\n" + jsonstuff.loadJson())
   print("\n working on Hive table")
-  a = someClass()
+  a = SomeClass()
   a.main
   print("\nworking on Oracle table")
   import run_oracle as to
