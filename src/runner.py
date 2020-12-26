@@ -1,64 +1,24 @@
-from pyspark import SparkContext, SparkConf
-from pyspark.sql import SQLContext
-from pyspark.sql import HiveContext
-from pyspark.sql import SparkSession
-import findspark
-findspark.init()
-from pyspark.sql import Row
-from pyspark.sql.types import StringType, ArrayType
-from pyspark.sql.functions import udf, col, max as max, to_date, date_add, \
-    add_months
-from datetime import datetime, timedelta
-import os
-from os.path import join, abspath
-from typing import Optional
-import logging
-import random
-import string
-import math
 import mathOperations as mo
 import UsedFunctions as uf
 import conf.variables as v
 import conf.configs as c
+import MyTests as m
+import sales as sa
+
+from sparkutils import sparkstuff as s
 
 class someClass:
 
  def main():
-  rec = {}
-
-  spark = SparkSession.builder \
-          .appName("app1") \
-          .enableHiveSupport() \
-          .getOrCreate()
-  # Hive settings
-  settings = [
-      ("hive.exec.dynamic.partition", "true"),
-      ("hive.exec.dynamic.partition.mode", "nonstrict"),
-      ("spark.sql.orc.filterPushdown", "true"),
-      ("hive.msck.path.validation", "ignore"),
-      ("spark.sql.caseSensitive", "true"),
-      ("spark.speculation", "false"),
-      ("hive.metastore.authorization.storage.checks", "false"),
-      ("hive.metastore.client.connect.retry.delay", "5s"),
-      ("hive.metastore.client.socket.timeout", "1800s"),
-      ("hive.metastore.connect.retries", "12"),
-      ("hive.metastore.execute.setugi", "false"),
-      ("hive.metastore.failure.retries", "12"),
-      ("hive.metastore.schema.verification", "false"),
-      ("hive.metastore.schema.verification.record.version", "false"),
-      ("hive.metastore.server.max.threads", "100000"),
-      ("hive.metastore.authorization.storage.checks", "/apps/hive/warehouse")
-  ]
-  spark.sparkContext._conf.setAll(settings)
-
-  sc = SparkContext.getOrCreate()
+  appName = "app1"
+  spark = s.spark_session(appName)
+  spark.sparkContext._conf.setAll(v.settings)
+  sc = s.sparkcontext()
   print(sc.getConf().getAll())
-  sqlContext = SQLContext(sc)
-  ##HiveContext = HiveContext(sc)
+  hivecontext = s.hivecontext()
   lst = (spark.sql("SELECT FROM_unixtime(unix_timestamp(), 'dd/MM/yyyy HH:mm:ss.ss') ")).collect()
   print("\nStarted at");uf.println(lst)
 
-  ##global numRows
   numRows = 10   ## do in increment of 50K rows otherwise you blow up driver memory!
   #
   ## Check if table exist otherwise create it
@@ -66,6 +26,7 @@ class someClass:
   rows = 0
   sqltext  = ""
   if (spark.sql(f"""SHOW TABLES IN {v.DB} like '{v.tableName}'""").count() == 1):
+    spark.sql(f"""ANALYZE TABLE {v.fullyQualifiedTableName} compute statistics""")
     rows = spark.sql(f"""SELECT COUNT(1) FROM {v.fullyQualifiedTableName}""").collect()[0][0]
     print ("number of rows is ",rows)
   else:
@@ -134,7 +95,6 @@ class someClass:
   print("\nFinished at");uf.println(lst)
 
 
-  ##print(os.listdir(warehouseLocation))
   spark.sql("show databases").show()
 
 
@@ -148,8 +108,8 @@ if __name__ == "__main__":
   print("\nExpected gross salary per year at daily rate of GBP" + str(mathoperations.returnDailyRate()) + " is " + mathoperations.expectedYearlyIncome())
   print("\n" + jsonstuff.loadJson())
   print("\n working on Hive table")
-  a = someClass
-  a.main()
+  a = someClass()
+  a.main
   print("\nworking on Oracle table")
   import run_oracle as to
   c = to.runOracle
@@ -161,4 +121,12 @@ if __name__ == "__main__":
   b.drop_if_bqTable_exists()
   b.bq_create_table()
   b.bq_load_csv_in_gcs()
+  bigboy = 87
+  d = m.MyTests("Mich", 36, [1,8,9,7,bigboy])
+  d.printMyName()
+  d.printMyAge()
+  d.ptintL()
+  d.printAvg()
+  e = sa.Sales()
+
 

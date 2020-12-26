@@ -1,31 +1,16 @@
 from __future__ import print_function
-# jdbc stuff
-#import jaydebeapi
 import cx_Oracle
 import sys
-import pprint
 import csv
-
-# google stuff
 import google
 from google.cloud import storage
 from google.cloud import bigquery
 import google.auth
-from google import resumable_media
-from google.resumable_media.requests import ChunkedDownload
-from google.resumable_media.requests import Download
-from google.resumable_media.requests import RawDownload
-from google.resumable_media.requests import RawChunkedDownload
-from google.resumable_media.requests import MultipartUpload
-from google.resumable_media.requests import ResumableUpload
-
-from operator import itemgetter
 from conf import variables as v
 from conf import configs as c
 class AllInOne:
 
   rec = {}
-
 
   def read_oracle_table(self):
     # Check Oracle is accessible
@@ -59,39 +44,6 @@ class AllInOne:
         print("Table " + v._dbschema+"."+ v._dbtable + " does not exist, quitting!")
         c.conn.close()
         sys.exit(1)
-
-  def read_oracle_table_pre(self):
-    # Check Oracle is accessible
-    try:
-      c.connection
-    except jaydebeapi.Error as e:
-      print("Error: {0} [{1}]".format(e.msg, e.code))
-      sys.exit(1)
-    else:
-      # Check if table exists
-      if (c.rs.next()):
-        print("\nTable " + v._dbschema+"."+ v._dbtable + " exists\n")
-        c.cursor.execute(c.sql)
-        # get column descriptions
-        columns = [i[0] for i in c.cursor.description]
-        rows = c.cursor.fetchall()
-        # write oracle data to the csv file
-        csv_file = open(v.dump_dir+v.filename, mode='w')
-        writer = csv.writer(csv_file, delimiter=',', lineterminator="\n", quoting=csv.QUOTE_NONNUMERIC)
-        # write column headers to csv file
-        writer.writerow(columns)
-        for row in rows:
-          writer.writerow(row)   ## write rows to csv file
-
-        print("writing to csv file " + v.dump_dir+v.filename + " complete")
-        c.cursor.close()
-        c.connection.close()
-        csv_file.close()
-      else:
-        print("Table " + v._dbschema+"."+ v._dbtable + " does not exist, quitting!")
-        c.connection.close()
-        sys.exit(1)
-
 
   def drop_if_bqTable_exists():
     from google.cloud.exceptions import NotFound
